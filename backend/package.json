@@ -1,0 +1,1 @@
+{"description":"Database backend for The Real You Initiative website. Receives form submissions and stores them in SQLite. Uses only Node.js built-ins - nothing to install. Requires Node.js 22+.","main":"server.js","name":"the-real-you-initiative-backend","scripts":{"start":"node server.js"},"type":"commonjs","version":"1.0.0"}

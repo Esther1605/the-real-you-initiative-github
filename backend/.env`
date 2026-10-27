@@ -1,0 +1,6 @@
+# Copy this file, rename the copy to ".env", then change ADMIN_KEY.
+# The ADMIN_KEY is the password you type to view submissions in the Admin page.
+# Use something long that only you know. Never share it and never publish it.
+
+PORT=4000
+ADMIN_KEY=change-me-to-a-long-secret-password
