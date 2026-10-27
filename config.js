@@ -21,4 +21,4 @@
 //  Do NOT put a "/" at the end of the address.
 // ============================================================
 
-window.TRY_BACKEND_URL = "http://localhost:4000";
+window.TRY_BACKEND_URL = "";
