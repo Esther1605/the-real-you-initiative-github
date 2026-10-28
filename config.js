@@ -13,7 +13,7 @@
 //  2. Put its address between the quotes below, for example:
 //       window.TRY_BACKEND_URL = "http://localhost:4000";
 //     or, when the backend is online:
-//       window.TRY_BACKEND_URL = "https://try-backend.onrender.com";
+//       window.TRY_BACKEND_URL = "https://try-backend-oabw.onrender.com";
 //  3. Save this file. Every form on the site (Join, Show Interest,
 //     Contact, Newsletter) will then save into the database, and
 //     you can read the submissions in the backend's Admin page.

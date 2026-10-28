@@ -203,3 +203,55 @@ GitHub cannot run the database server, so we host just the `backend` folder on R
 ---
 
 *The Real You Initiative — "Raising a Generation That Matters."*
+
+---
+
+## Part 7 — Turn the website into an app (and the Play Store)
+
+The project already includes everything needed for an **installable app**:
+
+- `manifest.webmanifest` — the app's name, colours and icons.
+- `icons/` — app icons made from the official TRY logo (192px, 512px, and a Play-Store-ready maskable icon).
+- `sw.js` — a service worker, so the site also opens when a visitor is offline.
+
+### Step 1 — Let people install it from the browser (free, no store)
+
+Once the website is live on GitHub Pages (Part 3):
+
+1. Open the live site on an Android phone in **Chrome**.
+2. Tap the **⋮** menu → **Install app** (or "Add to Home screen").
+3. The Real You Initiative now sits on the phone's home screen with its own icon and opens full-screen like a normal app. 🎉
+
+On iPhone: open the site in **Safari** → **Share** → **Add to Home Screen**.
+
+### Step 2 — Publish on the Google Play Store (optional)
+
+Play Store apps made from a website use Google's official **Trusted Web Activity (TWA)** technology, usually generated with the free **Bubblewrap** tool. You will need:
+
+- The website live on an HTTPS address (your GitHub Pages address works).
+- A **Google Play Console** developer account — Google charges a one-time **$25** registration fee.
+- Node.js installed (you already have it).
+
+Steps:
+
+1. Install Bubblewrap:
+   ```bash
+   npm install -g @bubblewrap/cli
+   ```
+2. Generate the Android project from your live app manifest:
+   ```bash
+   bubblewrap init --manifest=https://YOUR-USERNAME.github.io/the-real-you-initiative/manifest.webmanifest
+   ```
+   Answer its questions (app name: *The Real You Initiative*, package id suggestion: `com.therealyouinitiative.app`). It also installs the Android/JDK tools it needs the first time.
+3. Bubblewrap prints a **digital asset link** fingerprint. It creates a file you must host on your website at `.well-known/assetlinks.json`:
+   - In this project, create a folder named `.well-known` and put the `assetlinks.json` file Bubblewrap gives you inside it.
+   - Commit and sync to GitHub, wait for Pages to update, then open `https://YOUR-USERNAME.github.io/the-real-you-initiative/.well-known/assetlinks.json` in a browser to confirm it loads. (This file is what proves to Android that the app and the website belong to you, so the app opens full-screen with no browser bar.)
+4. Build the signed app bundle:
+   ```bash
+   bubblewrap build
+   ```
+   This produces an `.aab` file (and a signing key — **keep the key file and its password safe forever**; you need the same key for every future update).
+5. Go to **Google Play Console** → **Create app** → name it *The Real You Initiative*, upload the `.aab` under **Testing → Internal testing** first, test it on your own phone, then promote it to **Production**.
+6. For the store listing you will need: a short and full description (adapt the website's About text — do not invent claims), the 512px icon (already in `icons/icon-512.png`), at least 2 screenshots of the site/app, and a **privacy policy URL** — your website already has a Privacy page, use its address: `https://YOUR-USERNAME.github.io/the-real-you-initiative/` and link to the Privacy section from your listing notes if asked. Google reviews new apps, which can take a few days.
+
+> Tip: do Step 1 first and use the installable app for a while. Go to the Play Store (Step 2) when you are ready for public discovery — the app itself is identical; only the distribution changes.

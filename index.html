@@ -4,6 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Real You Initiative</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#123B2A">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<style>
+#try-loader{position:fixed;inset:0;z-index:9999;background:#F8F5EE;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;transition:opacity .6s ease;}
+#try-loader.hide{opacity:0;pointer-events:none;}
+#try-loader .ring{width:72px;height:72px;border-radius:50%;border:6px solid #D8AC55;border-top-color:#1F6B4A;border-right-color:#1F6B4A;animation:try-spin .9s linear infinite;}
+#try-loader .name{font-family:Georgia,serif;font-size:22px;color:#123B2A;font-weight:700;text-align:center;padding:0 20px;}
+#try-loader .tag{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:#68736B;text-align:center;padding:0 20px;}
+@keyframes try-spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion: reduce){#try-loader .ring{animation:none}}
+</style>
+
 <meta name="description" content="The Real You Initiative helps young people discover themselves, develop their potential, build healthy relationships, grow spiritually, develop valuable skills, and become people of purpose and impact.">
 <meta property="og:title" content="The Real You Initiative">
 <meta property="og:description" content="Discover yourself. Develop yourself. Build healthy relationships. Grow spiritually. Develop valuable skills. Become a person of impact.">
@@ -439,6 +452,7 @@ footer.site li{margin-bottom:9px;font-size:.94rem}
 </style>
 </head>
 <body>
+<div id="try-loader" aria-hidden="true"><div class="ring"></div><div class="name">The Real You Initiative</div><div class="tag">Raising a Generation That Matters</div></div>
 
 <header class="site">
   <div class="wrap header-in">
@@ -1675,5 +1689,19 @@ observeReveals();
 </script>
 <script src="config.js"></script>
 <script src="form-to-database.js"></script>
+<script>
+(function(){
+  var start = Date.now(), hidden = false;
+  function hide(){
+    if(hidden) return;
+    var wait = Math.max(0, 2500 - (Date.now() - start)); /* spinner shows for at least 2.5 seconds */
+    hidden = true;
+    setTimeout(function(){ var el=document.getElementById('try-loader'); if(el){ el.classList.add('hide'); setTimeout(function(){el.remove();},700); } }, wait);
+  }
+  window.addEventListener('load', hide);
+  setTimeout(hide, 6000); /* safety: never stay stuck */
+  if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(function(){}); }
+})();
+</script>
 </body>
 </html>

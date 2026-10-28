@@ -88,6 +88,12 @@ const ADMIN_PAGE = `<!DOCTYPE html>
  table{width:100%;border-collapse:collapse;margin-top:20px;background:#123B2A}
  th,td{border:1px solid #2c5542;padding:8px 10px;text-align:left;font-size:14px;vertical-align:top}
  th{background:#1F6B4A} pre{white-space:pre-wrap;margin:0;font-size:13px}
+ .reply{display:flex;flex-direction:column;gap:8px;min-width:170px}
+ .rbtn{display:inline-block;padding:9px 12px;border-radius:8px;text-decoration:none;font-size:14px;text-align:center}
+ .rbtn.gold{background:#D8AC55;color:#123B2A;font-weight:600}
+ .rbtn.green{background:#1F6B4A;color:#fff}
+ .rbtn.plain{background:transparent;color:#cfe6d8;border:1px solid #2c5542;font-size:13px}
+ .none{color:#9db8a9;font-size:13px}
 </style></head><body>
 <h1>The Real You Initiative - Form Submissions</h1>
 <p>Type your ADMIN_KEY (from backend/.env) to view submissions saved in the database.</p>
@@ -95,6 +101,31 @@ const ADMIN_PAGE = `<!DOCTYPE html>
 <button onclick="load()">View submissions</button>
 <div id="out"></div>
 <script>
+function esc(t){ return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function pickField(data, words){
+  if(!data) return '';
+  var keys=Object.keys(data);
+  for(var i=0;i<keys.length;i++){
+    var lk=keys[i].toLowerCase();
+    for(var w=0;w<words.length;w++){
+      if(lk.indexOf(words[w])!==-1){
+        var v=data[keys[i]];
+        if(v!==null && v!==undefined && String(v).trim()!=='') return String(v).trim();
+      }
+    }
+  }
+  return '';
+}
+function waNumber(phone){
+  var d=String(phone||'').replace(/[^0-9]/g,'');
+  if(!d) return '';
+  if(d.charAt(0)==='0') d='234'+d.slice(1);
+  else if(d.length===10 && (d.charAt(0)==='7'||d.charAt(0)==='8'||d.charAt(0)==='9')) d='234'+d;
+  return d;
+}
+function prettyForm(ft){
+  return String(ft||'website form').replace(/[-_]+/g,' ').replace(/\\b\\w/g,function(c){return c.toUpperCase();});
+}
 async function load(){
   const key=document.getElementById('key').value;
   const r=await fetch('/api/submissions',{headers:{'x-admin-key':key}});
@@ -102,10 +133,31 @@ async function load(){
   if(!r.ok){ out.innerHTML='<p style="color:#ef9a9a">Wrong admin key.</p>'; return; }
   const j=await r.json();
   if(!j.count){ out.innerHTML='<p>No submissions yet.</p>'; return; }
-  let h='<table><tr><th>#</th><th>Date (UTC)</th><th>Form</th><th>All fields</th></tr>';
+  let h='<table><tr><th>#</th><th>Date (UTC)</th><th>Form</th><th>All fields</th><th>Reply</th></tr>';
   for(const s of j.submissions){
-    h+='<tr><td>'+s.id+'</td><td>'+s.created_at+'</td><td>'+s.form_type+'</td><td><pre>'+
-       JSON.stringify(s.data,null,2).replace(/</g,'&lt;')+'</pre></td></tr>';
+    var d=s.data||{};
+    var name=s.name||pickField(d,['full name','fullname','name']);
+    var email=s.email||pickField(d,['email','e-mail']);
+    var phone=s.phone||pickField(d,['whatsapp','phone','tel']);
+    var first=name?name.split(' ')[0]:'there';
+    var formLabel=prettyForm(s.form_type);
+    var subject='Re: Your '+formLabel+' submission - The Real You Initiative';
+    var body='Hello '+first+',\\n\\nThank you for reaching out to The Real You Initiative through our '+formLabel+' form. We have received your message and we are glad you connected with us.\\n\\n[Write your reply here]\\n\\nWarm regards,\\nThe Real You Initiative team\\nRaising a Generation That Matters.';
+    var btns='';
+    if(email){
+      var gmail='https://mail.google.com/mail/?view=cm&fs=1&to='+encodeURIComponent(email)+'&su='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+      var mailto='mailto:'+encodeURIComponent(email)+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+      btns+='<a class="rbtn gold" target="_blank" rel="noopener" href="'+gmail+'">Reply by email (Gmail)</a>';
+      btns+='<a class="rbtn plain" href="'+mailto+'">Use email app instead</a>';
+    }
+    var wa=waNumber(phone);
+    if(wa){
+      var wtext='Hello '+first+', this is The Real You Initiative team. Thank you for filling our '+formLabel+' form on our website. We are replying to your message here.';
+      btns+='<a class="rbtn green" target="_blank" rel="noopener" href="https://wa.me/'+wa+'?text='+encodeURIComponent(wtext)+'">Reply on WhatsApp</a>';
+    }
+    if(!btns) btns='<span class="none">No email or phone was given on this submission.</span>';
+    h+='<tr><td>'+s.id+'</td><td>'+esc(s.created_at)+'</td><td>'+esc(s.form_type)+'</td><td><pre>'+
+       esc(JSON.stringify(s.data,null,2))+'</pre></td><td><div class="reply">'+btns+'</div></td></tr>';
   }
   out.innerHTML=h+'</table>';
 }
