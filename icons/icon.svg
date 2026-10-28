@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#123B2A"/>
+  <circle cx="256" cy="256" r="196" fill="none" stroke="#D8AC55" stroke-width="10"/>
+  <circle cx="256" cy="84" r="9" fill="#D8AC55"/>
+  <circle cx="256" cy="428" r="9" fill="#D8AC55"/>
+  <text x="256" y="272" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-weight="bold" font-size="138" fill="#D8AC55" letter-spacing="4">TRY</text>
+  <text x="256" y="338" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="37" fill="#F8F5EE" letter-spacing="7">THE REAL YOU</text>
+</svg>
